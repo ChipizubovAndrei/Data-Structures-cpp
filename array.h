@@ -93,7 +93,7 @@ public:
     }
 
     // Оператор копирования
-    DynamicArray& operator=(DynamicArray const& other) {
+    DynamicArray& operator=(const DynamicArray<T>& other) {
         if (m_size != 0) {
             delete [] m_data;
         }
