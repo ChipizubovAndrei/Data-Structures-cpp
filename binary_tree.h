@@ -25,7 +25,7 @@ public:
 template <typename T>
 class BinaryTree
 {
-private:
+protected:
     TreeNode<T>* root;
 
     // Preorder traversal
@@ -140,6 +140,87 @@ public:
         }
     }
 
+    TreeNode<T>* find(T _value) const
+    {
+        TreeNode<T>* temp = root;
+        while(temp) {
+            if (temp->value == _value) {
+                break;
+            } else if (temp->value > _value) {
+                temp = temp->left;
+            } else {
+                temp = temp->right;
+            }
+        }
+        return temp;
+    }
+
+    void remove(T _value)
+    {
+        TreeNode<T>* curr = root;
+        TreeNode<T>* next = root;
+        while (next) {
+            if (next->value == _value) {
+                // У удаляемого узла нет потомков
+                if (next->left == nullptr && next->right == nullptr) {
+                    if (curr->left == next) {
+                        curr->left = nullptr;
+                    } else {
+                        curr->right = nullptr;
+                    }
+                    delete next;
+                // У удаляемого узла один потомок справа
+                } else if (next->left == nullptr && next->right) {
+                    if (curr->left == next) {
+                        curr->left = next->right;
+                    } else {
+                        curr->right = next->right;
+                    }
+                    delete next;
+                // У удаляемого узла один потомок слева
+                } else if (next->left && next->right == nullptr)  {
+                    if (curr->left == next) {
+                        curr->left = next->left;
+                    } else {
+                        curr->right = next->left;
+                    }
+                    delete next;
+                // У удаляемого узла два потомка
+                } else {
+                    curr = next;
+                    next = next->right;
+                    if (next->left == nullptr) {
+                        curr->value = next->value;
+                        curr->right = next->right;
+                        delete next;
+                    } else {
+                        TreeNode<T>* deleteNode = curr;
+                        while (next->left) {
+                            curr = next;
+                            next = next->left;
+                        }
+                        if (next->right == nullptr) {
+                            deleteNode->value = next->value;
+                            curr->left = nullptr;
+                            delete next;
+                        } else {
+                            deleteNode->value = next->value;
+                            curr->left = next->right;
+                            delete next;
+                        }
+                    }
+                }
+                break;
+            } else if (next->value > _value) {
+                curr = next;
+                next = next->left;
+            } else {
+                curr = next;
+                next = next->right;
+            }
+        }
+    }
+
     T getMax() const
     {
         TreeNode<T>* temp = root;
@@ -153,4 +234,15 @@ public:
         while(temp->left) temp = temp->left;
         return temp->value;
     }
+
+    TreeNode<T>* getRoot() const
+    {
+        return root;
+    }
+};
+
+template <typename T>
+class AVLTree : public BinaryTree<T>
+{
+
 };
